@@ -1,0 +1,27 @@
+name: DevSecOps CI Pipeline
+
+on:
+  push:
+    branches: ["main"]
+
+jobs:
+  security-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      # 🔐 SAST - Semgrep
+      - name: Run Semgrep
+        uses: returntocorp/semgrep-action@v1
+
+      # 🔐 Dependency Scan - Snyk
+      - name: Run Snyk
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+      # 🔐 Secret Scan - Gitleaks
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
