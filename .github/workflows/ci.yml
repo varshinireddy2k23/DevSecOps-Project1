@@ -9,6 +9,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # 📥 Checkout Code
       - name: Checkout Code
         uses: actions/checkout@v3
 
@@ -16,9 +17,18 @@ jobs:
       - name: Run Semgrep
         uses: returntocorp/semgrep-action@v1
 
+      # 📦 Install Dependencies (REQUIRED for Snyk)
+      - name: Install Dependencies
+        run: |
+          cd app
+          npm install
+
       # 🔐 Dependency Scan - Snyk
       - name: Run Snyk
-        uses: snyk/actions/node@master
+        uses: snyk/actions/node@v3
+        with:
+          command: test
+          args: --file=app/package.json
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
 
